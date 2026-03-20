@@ -27,5 +27,9 @@ def chunk_text(
         # Increment start id
         chunk_start += chunk_size - overlap
 
+        # Stop loop if next token would be shorter than the overlap
+        if len(token_ids[chunk_start : chunk_start+chunk_size]) < overlap:
+            break
+
     return chunks
 
