@@ -36,5 +36,6 @@ def test_chunk_text_overlap(monkeypatch):
     for chunk_i in range(len(chunks)-1):
         this_chunk = chunks[chunk_i]
         next_chunk = chunks[chunk_i+1]
-        assert this_chunk[-overlap:] == next_chunk[:overlap]
+        actual_overlap = min(overlap, len(next_chunk))  # in case the final chunk is shorter than overlap
+        assert this_chunk[-actual_overlap:] == next_chunk[:actual_overlap]
 
