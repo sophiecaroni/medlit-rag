@@ -8,6 +8,7 @@ jupyter = "*"
 torch = "*"
 transformers = "*"
 pytest = "*"
+biopython = "*"
 
 [dev-packages]
 
