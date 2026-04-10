@@ -13,6 +13,7 @@ class MedLitRagIndex:
         self.d = d
         self.index = faiss.IndexFlatIP(d)
         self.metadata = []
+        self.output_path = Path(__file__).parent.parent / 'outputs'
 
     def add(self, xb: torch.Tensor | np.ndarray,  metadata: list[dict]) -> None:
         """
@@ -34,7 +35,7 @@ class MedLitRagIndex:
         self.index.add(x=xb)
         self.metadata.extend(metadata)
 
-    def save_index(self, verbose: bool = False) -> None:
+    def save_index(self, verbose: bool = False, idx_fname: str | None = None, metadata_fname: str | None = None) -> None:
         """
         Save index and metadata to disk.
         :param verbose: If True, prints export message.
@@ -42,23 +43,23 @@ class MedLitRagIndex:
         :param metadata_fname: Name of metadata file, defaults to 'metadata.json'
         :return: None
         """
-        output_path = Path(__file__).parent.parent / 'outputs'
-        output_path.mkdir(parents=True, exist_ok=True)
+        # Make sure outputs directory exists before saving
+        self.output_path.mkdir(parents=True, exist_ok=True)
 
         # Save index
-        idx_fname = 'index'
-        idx_fpath = output_path / idx_fname
+        idx_fname = idx_fname or 'index'
+        idx_fpath = self.output_path / idx_fname
         faiss.write_index(self.index, str(idx_fpath))
 
         # Define and save metadata
-        metadata_fname = 'metadata.json'
-        metadata_fpath = output_path / metadata_fname
+        metadata_fname = metadata_fname or 'metadata.json'
+        metadata_fpath = self.output_path / metadata_fname
 
         with open(metadata_fpath, 'w') as f:
             json.dump(self.metadata, f)
         if verbose:
             print(
-                f"Index and metadata exported at {output_path} as {idx_fname} and {metadata_fname}"
+                f"Index and metadata exported as {idx_fname} and {metadata_fname} at {self.output_path}"
             )
 
     def load(self, idx_fpath: Path | None = None, metadata_fpath: Path | None = None) -> tuple[faiss.Index, list]:
@@ -68,9 +69,8 @@ class MedLitRagIndex:
         :param metadata_fpath:
         :return:
         """
-        output_path = Path(__file__).parent.parent / 'outputs'
-        idx_fpath = idx_fpath or output_path / 'index'
-        metadata_fpath = metadata_fpath or output_path / 'metadata.json'
+        idx_fpath = idx_fpath or self.output_path / 'index'
+        metadata_fpath = metadata_fpath or self.output_path / 'metadata.json'
         self.index = faiss.read_index(str(idx_fpath))
         with open(metadata_fpath, 'r') as f:
             self.metadata = json.load(f)
