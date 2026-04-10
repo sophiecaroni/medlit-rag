@@ -42,7 +42,7 @@ class MedLitRagIndex:
         Save index and metadata.
         :return: None
         """
-        output_path = Path('.outputs')
+        output_path = Path(__file__).parent.parent / 'outputs'
         output_path.mkdir(parents=True, exist_ok=True)
 
         # Save index
@@ -67,8 +67,9 @@ class MedLitRagIndex:
         :param metadata_fpath:
         :return:
         """
-        idx_fpath = idx_fpath or Path('.outputs') / 'index'
-        metadata_fpath = metadata_fpath or Path('.outputs') / 'metadata.json'
+        output_path = Path(__file__).parent.parent / 'outputs'
+        idx_fpath = idx_fpath or output_path / 'index'
+        metadata_fpath = metadata_fpath or output_path / 'metadata.json'
         self.index = faiss.read_index(str(idx_fpath))
         with open(metadata_fpath, 'r') as f:
             self.metadata = json.load(self.metadata, f)
