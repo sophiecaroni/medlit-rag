@@ -37,9 +37,11 @@ class MedLitRagIndex:
 
         return self.index
 
-    def save_index(self) -> None:
+    def save_index(self, verbose: bool = False) -> None:
         """
         Save index and metadata.
+        Save index and metadata to disk.
+        :param verbose: If True, prints export message.
         :return: None
         """
         output_path = Path(__file__).parent.parent / 'outputs'
@@ -56,9 +58,10 @@ class MedLitRagIndex:
 
         with open(metadata_fpath, 'w') as f:
             json.dump(self.metadata, f)
-        print(
-            f"Index and metadata exported at {output_path} as {idx_fname} and {metadata_fname}"
-        )
+        if verbose:
+            print(
+                f"Index and metadata exported at {output_path} as {idx_fname} and {metadata_fname}"
+            )
 
     def load(self, idx_fpath: Path | None = None, metadata_fpath: Path | None = None) -> tuple[faiss.Index, list]:
         """
