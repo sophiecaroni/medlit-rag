@@ -14,7 +14,7 @@ class MedLitRagIndex:
         self.index = faiss.IndexFlatIP(d)
         self.metadata = []
 
-    def add(self, xb: torch.Tensor | np.ndarray,  metadata: list[dict]) -> faiss.Index:
+    def add(self, xb: torch.Tensor | np.ndarray,  metadata: list[dict]) -> None:
         """
         Adds database embeddings (along with their metadata) to a FAISS index.
         :param xb: database embeddings
@@ -33,8 +33,6 @@ class MedLitRagIndex:
 
         self.index.add(x=xb)
         self.metadata.extend(metadata)
-
-        return self.index
 
     def save_index(self, verbose: bool = False) -> None:
         """
