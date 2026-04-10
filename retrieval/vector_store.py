@@ -75,7 +75,7 @@ class MedLitRagIndex:
         metadata_fpath = metadata_fpath or output_path / 'metadata.json'
         self.index = faiss.read_index(str(idx_fpath))
         with open(metadata_fpath, 'r') as f:
-            self.metadata = json.load(self.metadata, f)
+            self.metadata = json.load(f)
         return self.index, self.metadata
 
     def search(self, xq: torch.Tensor | np.ndarray, k: int = 4) -> tuple[torch.Tensor, torch.Tensor]:
