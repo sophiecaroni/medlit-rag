@@ -14,16 +14,16 @@ class MedLitRagIndex:
         self.index = faiss.IndexFlatIP(d)
         self.metadata = []
 
-    def add(self, xb: torch.Tensor | np.ndarray,  metadata: list[dict] | None = None) -> faiss.Index:
+    def add(self, xb: torch.Tensor | np.ndarray,  metadata: list[dict]) -> faiss.Index:
         """
-        Adds database embeddings (along with metadata) to a FAISS index.
+        Adds database embeddings (along with their metadata) to a FAISS index.
         :param xb: database embeddings
         :param metadata: emdeddings metadata
         :return: updated index
         """
         if xb.shape[1] != self.d:
             raise ValueError(f'Dimension 1 of xb should be {self.d}, got {xb.shape[1]} ({xb.shape=}).')
-        if metadata and len(metadata) != xb.shape[0]:
+        if len(metadata) != xb.shape[0]:
             raise ValueError(f"metadata length {len(metadata)} must match number of embeddings {xb.shape[0]}")
 
         # FAISS excpetcs a float32 numpy array
@@ -32,16 +32,16 @@ class MedLitRagIndex:
         xb = np.ascontiguousarray(xb, dtype='float32')
 
         self.index.add(x=xb)
-        if metadata:
-            self.metadata.extend(metadata)
+        self.metadata.extend(metadata)
 
         return self.index
 
     def save_index(self, verbose: bool = False) -> None:
         """
-        Save index and metadata.
         Save index and metadata to disk.
         :param verbose: If True, prints export message.
+        :param idx_fname: Name of index file, defaults to 'index'
+        :param metadata_fname: Name of metadata file, defaults to 'metadata.json'
         :return: None
         """
         output_path = Path(__file__).parent.parent / 'outputs'

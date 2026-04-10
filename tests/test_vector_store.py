@@ -30,7 +30,7 @@ def test_add():
     assert index.metadata[0] == {"pubmed_id": "0", "title": "Paper 0", "chunk_text": "text 0", "chunk_index": 0}
     
     
-def test_add_without_metadata():
+def test_add_mismatched_metadata_raises():
     # Initialize index
     index = MedLitRagIndex(d=10)
 
@@ -41,11 +41,10 @@ def test_add_without_metadata():
     xb[:, 0] += np.arange(nb) / 1000.
     xb = xb / np.linalg.norm(xb, axis=1, keepdims=True)  # normalize
 
-    # Add database to index and no metadata
-    index.add(xb, None)
-
-    # Assert metadata is empty
-    assert index.metadata == []
+    # metadata length (nb-1) doesn't match number of embeddings (nb)
+    mismatched_metadata = [dict() for _ in range(nb-1)]
+    with pytest.raises(ValueError):
+        index.add(xb, mismatched_metadata)
 
 
 @pytest.mark.parametrize(
@@ -67,8 +66,9 @@ def test_search(inp, expected):
     xb[:, 0] += np.arange(nb) / 1000.
     xb = xb / np.linalg.norm(xb, axis=1, keepdims=True)  # normalize
 
-    # Add database to index
-    index.add(xb, None)
+    # Add database (and metadata of the same length) to index
+    metadata = [dict() for _ in range(nb)]
+    index.add(xb, metadata)
     k = 1
     query = xb[inp-1:inp]  # select n-th embedding in the index (e.g. inp 1 selects first embedding)
 
