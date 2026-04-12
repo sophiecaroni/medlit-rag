@@ -51,30 +51,34 @@ class MedLitRagIndex:
         idx_fpath = self.output_path / idx_fname
         faiss.write_index(self.index, str(idx_fpath))
 
-        # Define and save metadata
+        # Save metadata
         metadata_fname = metadata_fname or 'metadata.json'
         metadata_fpath = self.output_path / metadata_fname
-
         with open(metadata_fpath, 'w') as f:
             json.dump(self.metadata, f)
+
         if verbose:
             print(
                 f"Index and metadata exported as {idx_fname} and {metadata_fname} at {self.output_path}"
             )
 
-    def load(self, idx_fpath: Path | None = None, metadata_fpath: Path | None = None) -> tuple[faiss.Index, list]:
+    def load(self, idx_fname: str | None = None, metadata_fname: str | None = None):
         """
         Load index and metadata.
-        :param idx_fpath:
-        :param metadata_fpath:
+        :param idx_fname:
+        :param metadata_fname:
         :return:
         """
-        idx_fpath = idx_fpath or self.output_path / 'index'
-        metadata_fpath = metadata_fpath or self.output_path / 'metadata.json'
+        # Load index
+        idx_fname = idx_fname or 'index'
+        idx_fpath = self.output_path / idx_fname
         self.index = faiss.read_index(str(idx_fpath))
+
+        # Load metadata
+        metadata_fname = metadata_fname or 'metadata.json'
+        metadata_fpath = self.output_path / metadata_fname
         with open(metadata_fpath, 'r') as f:
             self.metadata = json.load(f)
-        return self.index, self.metadata
 
     def search(self, xq: torch.Tensor | np.ndarray, k: int = 4) -> tuple[torch.Tensor, torch.Tensor]:
         """
