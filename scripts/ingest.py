@@ -7,7 +7,7 @@ from retrieval.vector_store import MedLitRagIndex
 
 def _expand_metadata_to_chunks(arts_metadata: list[dict], chunked_abstracts: list[list[str]]) -> list[dict]:
     """
-    Repeat each article's metadata once per chunk, so that metadata[i] corresponds to embeddings[i].
+    Repeat each article's metadata once per chunk, so that metadata[i] corresponds to index embeddings[i].
 
     :param arts_metadata: List of article metadata-dicts (pmid, year, title, text).
     :param chunked_abstracts: List of chunk lists, one per article.

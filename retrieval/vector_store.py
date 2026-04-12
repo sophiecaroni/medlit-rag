@@ -10,6 +10,10 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"  # need to prevent OMP crash when ru
 
 class MedLitRagIndex:
     def __init__(self, d: int = 768):
+        """
+        Initialise a FAISS IndexFlatIP index for cosine similarity search.
+        :param d: embedding dimensionality (must match the model used to produce embeddings)
+        """
         self.d = d
         self.index = faiss.IndexFlatIP(d)
         self.metadata = []
@@ -19,8 +23,8 @@ class MedLitRagIndex:
         """
         Adds database embeddings (along with their metadata) to a FAISS index.
         :param xb: database embeddings
-        :param metadata: emdeddings metadata
-        :return: updated index
+        :param metadata: embeddings metadata
+        :return: None
         """
         if xb.shape[1] != self.d:
             raise ValueError(f'Dimension 1 of xb should be {self.d}, got {xb.shape[1]} ({xb.shape=}).')
@@ -65,9 +69,9 @@ class MedLitRagIndex:
     def load(self, idx_fname: str | None = None, metadata_fname: str | None = None):
         """
         Load index and metadata.
-        :param idx_fname:
-        :param metadata_fname:
-        :return:
+        :param idx_fname: name of the index file to load, defaults to 'index'
+        :param metadata_fname: name of the metadata file to load, defaults to 'metadata.json'
+        :return: None
         """
         # Load index
         idx_fname = idx_fname or 'index'
@@ -85,13 +89,14 @@ class MedLitRagIndex:
         Search query neighbors into an index.
         :param xq: query embedding
         :param k: number of vectors most similar to the query
-        :return:
+        :return: (neigh_dists, neigh_idxs) — distances and FAISS indices of the k nearest neighbours, shape (n_queries, k)
         """
         # FAISS expects a float32 numpy array
         if isinstance(xq, torch.Tensor):
             xq = xq.numpy()
         xq = np.ascontiguousarray(xq, dtype='float32')
 
+        # Search returns distances and indices of the k nearest neighbours for each query vector
         neigh_dists, neigh_idxs = self.index.search(x=xq, k=k)
         return neigh_dists, neigh_idxs
 
