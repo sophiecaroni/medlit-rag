@@ -9,7 +9,7 @@ def retrieve_neighbors(query: str, fast: bool = False) -> list[list[dict]]:
     Performs nearest-neighbor search over an existing index to find elements similar to the input query, and returns
     each neighbors information (metadata, similarity score, index position).
     :param query: User's input query.
-    :param fast: If True, loads small version of index (for faster iteration).
+    :param fast: If True, loads small version of index and less neighbors are returned (for faster iteration).
     :return: Lists of neighbors information per query chunk.
     """
     # Chunk query text and embed them
@@ -23,7 +23,8 @@ def retrieve_neighbors(query: str, fast: bool = False) -> list[list[dict]]:
     index.load(idx_fname=idx_fname, metadata_fname=metadata_fname)
 
     # Find k most similar neighbors of each query's embedding
-    neigh_scores, neigh_idxs = index.search(embeddings, k=20)
+    k = 7 if fast else 20
+    neigh_scores, neigh_idxs = index.search(embeddings, k=k)
     neigh_idxs = neigh_idxs.tolist()  # convert to list
     neigh_scores = neigh_scores.tolist()  # convert to list
 
