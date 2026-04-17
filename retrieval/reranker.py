@@ -1,8 +1,6 @@
 from sentence_transformers import CrossEncoder
 from copy import deepcopy
 
-model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
-
 
 def rerank_neighbors(
         neighbors_information: list[list[dict]],
@@ -16,6 +14,7 @@ def rerank_neighbors(
     :param top_k: Number of neighbors to return
     :return: Lists of top-k neighbors information (with updated scores) per query chunk.
     """
+    model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
 
     # Initialise reranked result - use deep copy to avoid mutating the input internal lists
     reranked = deepcopy(neighbors_information)
