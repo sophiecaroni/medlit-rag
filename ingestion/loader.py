@@ -1,14 +1,15 @@
+import os
+from dotenv import load_dotenv
 from Bio import Entrez
 from Bio.Entrez import esearch, efetch, read
 from Bio.Entrez.Parser import StringElement
 
-Entrez.email = "sophie.caroni@gmail.com"  # Set the Entrez email parameter
+load_dotenv()
+Entrez.email = os.environ.get("ENTREZ_EMAIL")  # Set the Entrez email parameter
 _TOPICS = (
-    "diabetes",
-    "hypertension",
-    "heart failure",
-    "endometriosis",
-    "eczema",
+    topic.strip()
+    for topic in os.getenv("TOPICS", "").split(",")
+    if topic.strip()
 )
 
 

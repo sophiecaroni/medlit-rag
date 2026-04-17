@@ -1,4 +1,5 @@
 /notes/
+.env
 /data/
 /outputs/
 __pycache__/

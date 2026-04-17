@@ -20,6 +20,14 @@ After a user inputs a query a series of steps is performed:
 - Python 3.12+
 - requirements.txt dependencies
 
+## Setup
+Create a `.env` file in the project root with:
+```
+ENTREZ_EMAIL=your@email.com
+TOPICS=topic one,topic two,topic three
+```
+`ENTREZ_EMAIL` is required by the NCBI Entrez API. `TOPICS` is a comma-separated list of search terms of personal choice, used to build the knowledge base.
+
 ## Status
 Early development.
 
