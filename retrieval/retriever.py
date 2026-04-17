@@ -1,19 +1,17 @@
 import numpy as np
 from ingestion.embedder import embed_text
-from ingestion.chunker import chunk_text
 from retrieval.vector_store import MedLitRagIndex
 
 
-def retrieve_neighbors(query: str, fast: bool = False) -> list[list[dict]]:
+def retrieve_neighbors(query_chunks: list[str], fast: bool = False) -> list[list[dict]]:
     """
     Performs nearest-neighbor search over an existing index to find elements similar to the input query, and returns
     each neighbors information (metadata, similarity score, index position).
-    :param query: User's input query.
+    :param query_chunks: Chunks of a ser's input query.
     :param fast: If True, loads small version of index and less neighbors are returned (for faster iteration).
     :return: Lists of neighbors information per query chunk.
     """
     # Chunk query text and embed them
-    query_chunks = chunk_text(query)
     embeddings = np.array([embed_text(chunk).numpy() for chunk in query_chunks])
 
     # Load index and metadata
