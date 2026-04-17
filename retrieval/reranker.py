@@ -25,7 +25,7 @@ def rerank_neighbors(
 
         # Update score
         for neigh_i, chunk_dict in enumerate(reranked[chunk_i]):
-            chunk_dict['score'] = new_scores[neigh_i]
+            chunk_dict['score'] = float(new_scores[neigh_i])  # because cross-encoder returns np.floats
 
         # Sort neighbors based on new scores and only keep top-k ones
         reranked[chunk_i].sort(key=lambda neighbor: neighbor['score'], reverse=True)
